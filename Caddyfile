@@ -1,0 +1,21 @@
+{
+	log default {
+		output file /var/log/caddy/caddy.log
+		format json
+	}
+}
+
+:5001 {
+	redir / /vis/ 302
+	redir /vis /vis/ 308
+
+	handle_path /vis/* {
+		reverse_proxy 127.0.0.1:8000 {
+			header_up X-Forwarded-Prefix /vis
+		}
+	}
+
+	handle {
+		respond "Not found" 404
+	}
+}
