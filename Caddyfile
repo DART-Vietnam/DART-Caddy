@@ -7,12 +7,17 @@
 
 :5001 {
 	redir / /vis/ 302
-	redir /vis /vis/ 308
 
+	redir /vis /vis/ 308
 	handle_path /vis/* {
 		reverse_proxy 127.0.0.1:8000 {
 			header_up X-Forwarded-Prefix /vis
 		}
+	}
+
+	redir /pipeline /pipeline/ 308
+	handle_path /pipeline/* {
+		reverse_proxy 127.0.0.1:5051
 	}
 
 	handle {
