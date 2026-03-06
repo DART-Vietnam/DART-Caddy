@@ -2,6 +2,7 @@ services:
   caddy:
     container_name: caddy-reverse-proxy
     image: ghcr.io/dart-vietnam/dart-caddy:main
+    # command: [ "caddy", "run", "--watch", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile" ]
     restart: unless-stopped
     env_file: .env
     volumes:
