@@ -1,26 +1,35 @@
 {
 	log default {
-		output file /var/log/caddy/caddy.log
-		format json
+		output stdout
+		format console
+		level INFO
 	}
+
+	email tuyenhn@oucru.org
+
+	acme_dns cloudflare {env.CF_API_TOKEN}
 }
 
 :5001 {
-	redir / /vis/ 302
+	encode
 
-	redir /vis /vis/ 308
-	handle_path /vis/* {
-		reverse_proxy 127.0.0.1:8000 {
-			header_up X-Forwarded-Prefix /vis
+	@vis header X-Forwarded-Host vis.dartdengue.org
+	handle @vis {
+		reverse_proxy 127.0.0.1:{env.VIS_APP_PORT} {
 		}
 	}
 
-	redir /pipeline /pipeline/ 308
-	handle_path /pipeline/* {
-		reverse_proxy 127.0.0.1:5051
+	@pipeline header X-Forwarded-Host pipeline.dartdengue.org
+	handle @pipeline {
+		reverse_proxy 127.0.0.1:{env.PIPELINE_GUI_PORT} {
+		}
 	}
 
 	handle {
 		respond "Not found" 404
 	}
+}
+
+# put this host here so that TLS can be issued
+*.dartdengue.org {
 }
